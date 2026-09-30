@@ -4,16 +4,32 @@ export const CartSlice = createSlice({
   name: 'cart',
   initialState: {
     items: [], // Initialize items as an empty array
+    quantities: 0,
   },
   reducers: {
     addItem: (state, action) => {
-    
+      const {name, image, cost} = action.payload;
+      const existingItem = state.items.find(item => item.name === name);
+      if(existingItem){
+        existingItem.quantity++;
+        state.quantities++;
+      }else{
+        state.items.push({name, image, cost, quantity: 1});
+        state.quantities++;
+      }
     },
     removeItem: (state, action) => {
+      const {quantity} = action.payload;
+      state.quantities -= quantity
+      state.items = state.items.filter(item => item.name !== action.payload);
     },
     updateQuantity: (state, action) => {
-
-    
+      const {name, quantity} = action.payload;
+      const existingItem = state.items.find((item) => item.name === name);
+      if(existingItem){
+        existingItem.quantity = quantity;
+        state.quantities = state.items.reduce((acc, item) => acc + item.quantity, 0);
+      }
     },
   },
 });
